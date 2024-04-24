@@ -7,8 +7,13 @@ export default defineNuxtConfig({
   },
 
   modules: [
+    '@pinia/nuxt',
     "nuxt-primevue"
   ],
+
+  dir: {
+    public: '../public/'
+  },
 
   srcDir: "./src",
 
@@ -29,11 +34,21 @@ export default defineNuxtConfig({
     "~/assets/index.scss",
   ],
 
+  primevue: {
+    cssLayerOrder: 'reset,primevue'
+  },
+
   vite: {
     build: {
       sourcemap: false
     },
     clearScreen: true,
     logLevel: 'info' 
+  },
+
+  runtimeConfig: {
+    public: {
+      API_BASE_URL: `${process.env.API_BASE_URL}/`,
+    }
   }
 });
