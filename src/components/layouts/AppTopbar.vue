@@ -22,6 +22,10 @@ const commandHandler = (text: string) => {
   });
   
 };
+
+const returnTo = (to: string) => {
+  navigateTo(`/admin/${to}`);
+}
 </script>
 
 <template>
@@ -35,14 +39,31 @@ const commandHandler = (text: string) => {
       </Button>
     </div>
   </div>
-  <Sidebar v-model:visible="visible" header="Simple Terminal" position="full">
-    <div class="card h-1/2">
-      <Terminal
-        class="border-2"
-        welcomeMessage="Type your command"
-        prompt="PBL7$"
-        aria-label="CLI service"
-      />
+  <Sidebar v-model:visible="visible" header="PBL7">
+    <div class="flex flex-col card w-full gap-y-2">
+      <div class="card w-full border rounded-lg p-2 menu-item" @click="() => navigateTo('/')">
+        <Button icon="pi pi-comment" label="Predict"/>
+      </div>
+      <div class="card w-full border rounded-lg p-2 menu-item" @click="returnTo('')">
+        <Button icon="pi pi-home" label="Home"/>
+      </div>
+      <div class="card w-full border rounded-lg p-2 menu-item" @click="returnTo('crawl')">
+        <Button icon="pi pi-cloud-download" label="Crawl"/>
+      </div>
+      <div class="card w-full border rounded-lg p-2 menu-item" @click="returnTo('preprocess')">
+        <Button icon="pi pi-database" label="Preprocess"/>
+      </div>
+      <div class="card w-full border rounded-lg p-2 menu-item" @click="returnTo('setting')">
+        <Button icon="pi pi-cog" label="Setting"/>
+      </div>
     </div>
   </Sidebar>
 </template>
+<style lang="scss" scoped>
+.menu-item {
+  &:hover {
+    border-color: #11B9B5;
+    border-width: 2px;
+  }
+}
+</style>
