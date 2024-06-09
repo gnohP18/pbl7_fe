@@ -4,30 +4,21 @@ import { crawlStore } from "#imports";
 import Button from "primevue/button";
 
 const store = crawlStore();
-const { getAllFileCrawl } = store;
-
-const files = ref<FileData[]>([
-  { name: "File_1", dir: "abc", size: "12KB" },
-  { name: "File_2", dir: "abc", size: "12KB" },
-  { name: "File_3", dir: "abc", size: "12KB" },
-  { name: "File_4", dir: "abc", size: "12KB" },
-  { name: "File_4", dir: "abc", size: "12KB" },
-  { name: "File_4", dir: "abc", size: "12KB" },
-  { name: "File_4", dir: "abc", size: "12KB" },
-  { name: "File_4", dir: "abc", size: "12KB" },
-  { name: "File_4", dir: "abc", size: "12KB" },
-  { name: "File_4", dir: "abc", size: "12KB" },
-]);
+const { getAllFileCrawl, downloadFileStore } = store;
 
 onMounted(async() => {
   await getAllFileCrawl();
 })
 
+const download = (name: string) => {
+  window.location.href = generateUrlDownloadFile(name);
+}
 
+// const select
 </script>
 
 <template>
-  <div class="w-full h-full flex flex-row gap-2">
+  <!-- <div class="w-full h-full flex flex-row gap-2">
     <div class="w-4/12 px-2 gap-2">
       <Fieldset
         legend="Data crawl"
@@ -40,7 +31,12 @@ onMounted(async() => {
             <p>{{ file.name }}</p>
             <div class="flex flex-row gap-2">
               <span>{{ file.size }}</span>
-              <Button icon="pi pi-download" severity="secondary" class="rounded-full outline-dashed outline-1 outline-offset-1 outline-slate-200"/>
+              <Button 
+                icon="pi pi-download" 
+                severity="secondary" 
+                class="rounded-full outline-dashed outline-1 outline-offset-1 outline-slate-200"
+                @click="download(String(file.name))"
+                />
             </div>
           </div>
         </div>
@@ -48,8 +44,11 @@ onMounted(async() => {
       <div class="card h-3/6 border-2 rounded-md"></div>
     </div>
     <div class="w-8/12 primary-outline-pbl rounded-md">
-      
     </div>
+  </div> -->
+  <div class="w-full ">
+    <div></div>
+    <div></div>
   </div>
 </template>
 <style scoped>
