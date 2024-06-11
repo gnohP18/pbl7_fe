@@ -21,9 +21,9 @@ const jobs = computed(() => store.$state.jobs);
 const jobsData = ref<[id: Job][]>([]);
 const keyRender = ref<number>(0);
 const lastSync = ref<string>();
+
 onMounted(async() => {
   await store.indexCrawlStore();
-  keyRender.value = 0;
   prepareData();
   selectedUrlCrawl.value = urlCrawl[0];
   lastSync.value = new Date().toLocaleTimeString();
@@ -70,7 +70,6 @@ const chartData = ref();
 const chartOptions = ref();
 const setChartData = () => {
 const documentStyle = getComputedStyle(document.documentElement);
-
   return {
       labels: ['dtdd', 'may-tinh-bang', 'laptop-ldp'],
       datasets: [
@@ -140,7 +139,10 @@ const setChartOptions = () => {
         <label for="url-crawl" class="text-base font-bold">Select URL to crawl</label>
         <Dropdown v-model="selectedUrlCrawl" :options="urlCrawl" option-label="label" class="w-full border"/>
       </div>
-      <div class="flex flex-row items-center justify-end p-3"> 
+      <div class="flex flex-row items-center justify-between p-3 pt-8"> 
+        <Button class="h-[40px] p-2 gap-2 border hover:border-emerald-600">
+          Crawl all
+        </Button>
         <Button class="h-[40px] p-2 gap-2 border hover:border-emerald-600" @click="syncPage">
           <span>Last sync {{ lastSync }}</span>
           <i class="pi pi-sync"></i>
@@ -169,7 +171,14 @@ const setChartOptions = () => {
             <div class="text-sm font-bold">{{ get(jobsData, `${job}.status`) }}</div>
           </div>
           <div class="flex flex-row items-center justify-between">
-            <label for="created_at" class="text-sm">Last crawl {{ get(jobsData, `${job}.created_at`) }}</label>
+            <div class="flex flex-col">
+              <label for="begin_at" class="text-sm">Begin at</label>
+              <span>{{ new Date(get(jobsData, `${job}.begin_at`)).toLocaleString() }}</span>
+            </div>
+            <div class="flex flex-col">
+              <label for="end_at" class="text-sm">End at</label>
+              <span>{{ new Date(get(jobsData, `${job}.end_at`)).toLocaleString() }}</span>
+            </div>
             <div class="flex flex-row gap-x-2">
               <Button 
                 icon="pi pi-sync" 
