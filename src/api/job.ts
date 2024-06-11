@@ -16,3 +16,11 @@ export const crawlAPI = (taskKey: string) : Promise<any> => {
       return result.data
     });
 };
+
+export const startPreprocessAPI = () : Promise<any> => {
+  return axios
+    .get(`${API_URL}/preprocess/start`)
+    .then((result) => {
+      return result.data
+    });
+};
