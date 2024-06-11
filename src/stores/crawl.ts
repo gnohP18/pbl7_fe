@@ -17,7 +17,7 @@ const defaultState: State = {
     fileData: []
 }
 
-export const crawlStore = defineStore('', {
+export const crawlStore = defineStore('crawlStore', {
     state: (): State => Object.assign(defaultState),
     actions: {
         async getAllFileCrawl() {
@@ -29,7 +29,7 @@ export const crawlStore = defineStore('', {
         async indexCrawlStore() {
             this.$state.isLoading = true;
             await trackingAPI().then((result) => {
-                this.$state.jobs = result;
+                this.$state.jobs = result.jobs;
             })
             .catch(err => {
                 console.log(err);
