@@ -44,18 +44,18 @@ const returnTo = (to: string) => {
       <div class="card w-full border rounded-lg p-2 menu-item" @click="() => navigateTo('/')">
         <Button icon="pi pi-comment" label="Predict"/>
       </div>
-      <div class="card w-full border rounded-lg p-2 menu-item" @click="returnTo('')">
+      <!-- <div class="card w-full border rounded-lg p-2 menu-item" @click="returnTo('')">
         <Button icon="pi pi-home" label="Home"/>
-      </div>
+      </div> -->
       <div class="card w-full border rounded-lg p-2 menu-item" @click="returnTo('crawl')">
         <Button icon="pi pi-cloud-download" label="Crawl"/>
       </div>
       <div class="card w-full border rounded-lg p-2 menu-item" @click="returnTo('preprocess')">
         <Button icon="pi pi-database" label="Preprocess"/>
       </div>
-      <div class="card w-full border rounded-lg p-2 menu-item" @click="returnTo('setting')">
+      <!-- <div class="card w-full border rounded-lg p-2 menu-item" @click="returnTo('setting')">
         <Button icon="pi pi-cog" label="Setting"/>
-      </div>
+      </div> -->
     </div>
   </Sidebar>
 </template>

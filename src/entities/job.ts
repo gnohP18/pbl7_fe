@@ -16,3 +16,12 @@ export interface JobResult {
     begin_at?: string;
     end_at?: string;
 }
+
+export interface JobResultStatistic {
+    [category: string]: TotalCount
+}
+
+export interface TotalCount {
+    words_count: number;
+    sentence_count: number;
+}

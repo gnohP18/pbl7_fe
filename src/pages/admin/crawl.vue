@@ -6,7 +6,7 @@ import { CELERY_DASHBOARD_URL } from '~/constants/config';
 import Button from 'primevue/button';
 import Chart from 'primevue/chart';
 import { useToast } from "primevue/usetoast";
-import type { Job } from '~/entities/job';
+import type { Job, TotalCount } from '~/entities/job';
 
 import Dropdown from 'primevue/dropdown';
 useHead({ title: 'Crawl'});
@@ -24,6 +24,7 @@ const lastSync = ref<string>();
 
 onMounted(async() => {
   await store.indexCrawlStore();
+  await store.getResultCrawl();
   prepareData();
   selectedUrlCrawl.value = urlCrawl[0];
   lastSync.value = new Date().toLocaleTimeString();
@@ -66,24 +67,56 @@ const urlCrawl = [
   {value: 'https://www.thegioididong.com/', label: "Thegioididong" }
 ]
 
+const crawlAll = async () => {
+  await store.crawlAllStore();
+
+  if (!isLoading.value && isSucceed.value) {
+    toast.add({ severity: 'success', summary: 'ACTION SUCEEED', detail: `Crawl all created`, life: 3000 });
+    debouncedSyncPage();
+  }
+}
+
 const chartData = ref();
 const chartOptions = ref();
+const category = computed(() => {
+  return Object.keys(store.jobResultStatistic)
+})
+
+const numberWordCount = computed(() => {
+  const listObj = Object.values(store.jobResultStatistic);
+  let result: number = [];
+  listObj.forEach((item: TotalCount)  => {
+    result.push(Number(item.words_count));
+  })
+  return result;
+})
+
+const numberSentenceCount = computed(() => {
+  const listObj = Object.values(store.jobResultStatistic);
+  let result: number = [];
+  listObj.forEach((item: TotalCount)  => {
+    result.push(Number(item.sentence_count));
+  })
+  return result;
+})
 const setChartData = () => {
 const documentStyle = getComputedStyle(document.documentElement);
+  console.log(numberWordCount.value);
+  
   return {
-      labels: ['dtdd', 'may-tinh-bang', 'laptop-ldp'],
+      labels: category.value,
       datasets: [
           {
               label: 'Number of words',
               backgroundColor: documentStyle.getPropertyValue('--cyan-500'),
               borderColor: documentStyle.getPropertyValue('--cyan-500'),
-              data: [65, 59, 80]
+              data: numberWordCount.value
           },
           {
               label: 'Number of sentences',
               backgroundColor: documentStyle.getPropertyValue('--gray-500'),
               borderColor: documentStyle.getPropertyValue('--gray-500'),
-              data: [28, 48, 40]
+              data: numberSentenceCount.value
           }
       ]
   };
@@ -140,7 +173,7 @@ const setChartOptions = () => {
         <Dropdown v-model="selectedUrlCrawl" :options="urlCrawl" option-label="label" class="w-full border"/>
       </div>
       <div class="flex flex-row items-center justify-between p-3 pt-8"> 
-        <Button class="h-[40px] p-2 gap-2 border hover:border-emerald-600">
+        <Button class="h-[40px] p-2 gap-2 border hover:border-emerald-600" @click="crawlAll">
           Crawl all
         </Button>
         <Button class="h-[40px] p-2 gap-2 border hover:border-emerald-600" @click="syncPage">
@@ -191,6 +224,7 @@ const setChartOptions = () => {
               <Button 
                 icon="pi pi-download" 
                 label="Download"
+                :loading="get(jobsData, `${job}.status`) === STATUS.IN_PROGRESS"
                 class="bg-cyan-300 rounded-md outline-dashed outline-1 outline-offset-1 outline-slate-200 p-2"
                 @click="download(get(jobsData, `${job}.job_type`))"
                 />

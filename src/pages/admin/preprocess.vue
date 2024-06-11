@@ -121,6 +121,7 @@ const debouncedSyncPage = debounce(syncPage, 3000);
             @click="startPreprocess"/>
           <Button 
             icon="pi pi-download" 
+            :loading="String(job.status) === STATUS.IN_PROGRESS"
             label="Download preprocessed data"
             class="bg-cyan-300 rounded-md outline-1 outline-offset-1 outline-slate-200 p-2"
             @click="download('preprocess')"

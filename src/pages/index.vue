@@ -2,94 +2,83 @@
 import InputText from "primevue/inputtext";
 import { type MessageEntity } from "~/entities/message";
 import Message from "~/components/chat/Message.vue";
-import { sendQuestionApi } from "~/api/message";
+
 definePageMeta({
   layout: "default",
 });
+
+const messDefault = [
+  "Những sản phẩm chúng tôi khuyến nghị cho bạn là:",
+  "Các sản phẩm chúng tôi tìm được chính là:",
+  "Các sản phẩm dành cho bạn là:",
+  "Tôi nghĩ các sản phẩm dưới đây là các sản phẩm bạn cần:",
+  "Theo tôi các sản phẩm dưới đây có thể là:"
+]
+
+const store = predictStore();
+const isLoading = computed(() => store.isLoading);
+const isSucceed = computed(() => store.isSucceed);
+const toast = useToast();
 const arrMessgae = ref<MessageEntity[]>([
-  {
-    message: "Tôi muốn 1 chiếc điện thoại có thể chơi game mượt",
-    is_server: false,
-    loading: false,
-  },
-  {
-    message: "Chúng tôi gợi ý cho bạn chiếc điện thoại Samsung Galaxy not 7",
-    is_server: true,
-    loading: false,
-  },
-  {
-    message: "Chiếc điện thoại phải có thời lượng pin tốt",
-    is_server: false,
-    loading: false,
-  },
-  {
-    message:
-      "Điện thoại Iphone 15 promax có thời lượng pin lên đến 3600 mah phù hợp cho những người có nhu cầu sử dụng điện thoại như là công cụ chính",
-    is_server: true,
-    loading: false,
-  },
-  {
-    message: "Tôi muốn 1 chiếc điện thoại có thể chơi game mượt",
-    is_server: true,
-    loading: false,
-  },
-  {
-    message: "Tôi muốn 1 chiếc điện thoại có thể chơi game mượt",
-    is_server: true,
-    loading: false,
-  },
-  {
-    message: "Tôi muốn 1 chiếc điện thoại có thể chơi game mượt",
-    is_server: true,
-    loading: false,
-  },
-  {
-    message: "Tôi muốn 1 chiếc điện thoại có thể chơi game mượt",
-    is_server: true,
-    loading: false,
-  },
+  { message: "Xin chào, mời bạn nhập câu mô tả điện thoại", is_server: true, predictResponse: { keywords: '', products: null }  }
 ]);
+const responsePredict = computed(() => store.responsePredict);
+const keyword = computed(() => store.responsePredict.keywords.split(','))
 
 const message = ref<string>("");
-const loading = ref<boolean>(false);
 
 const sendQuestion = async () => {
-  loading.value = true;
-  console.log(arrMessgae.value);
-
+  scrollToBottom();
   const newMessage: MessageEntity = {
     message: message?.value,
     is_server: false,
     loading: false,
+    predictResponse: {
+      keywords: '',
+      products: {}
+    }
   };
   arrMessgae.value.push(newMessage);
   const waitingAnswerMessage: MessageEntity = {
     message: "Something went wrong",
     is_server: true,
     loading: true,
+    predictResponse: {
+      keywords: '',
+      products: {}
+    }
   };
   arrMessgae.value.push(waitingAnswerMessage);
-  await sendQuestionApi(newMessage?.message ?? "").then((result) => {
-    setTimeout(() => {
-      arrMessgae.value.pop();
+  await store.predictSentenceStore(newMessage?.message ?? "");
+
+  if (!isLoading.value && isSucceed.value) {
+    const index =  Math.floor(Math.random() * messDefault.length);
+    arrMessgae.value.pop();
       const succesAnswerMessage: MessageEntity = {
-        message: "Success",
+        message: messDefault[index],
         is_server: true,
         loading: false,
+        predictResponse: {
+          keywords: responsePredict.value.keywords,
+          products: responsePredict.value.products
+        }
       };
       arrMessgae.value.push(succesAnswerMessage);
-      loading.value = false;
-    }, 2000);
-  });
+  } else {
+
+  }
 
   message.value = "";
+};
+const scrollToBottom = () => {
+  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 };
 
 watch(arrMessgae, () => console.log(arrMessgae));
 </script>
 
 <template>
-  <div class="max-h-[95vh] grow flex flex-col">
+  <div class="h-[95vh] grow flex flex-col justify-between">
     <div class="container-message">
       <div class="overscroll-autol">
         <div v-for="mess in arrMessgae">
@@ -97,6 +86,8 @@ watch(arrMessgae, () => console.log(arrMessgae));
             :content="mess.message"
             :is-server="mess.is_server"
             :loading="mess.loading"
+            :product="mess.predictResponse.products"
+            :keyword="mess.predictResponse.keywords"
           />
         </div>
       </div>
@@ -106,9 +97,9 @@ watch(arrMessgae, () => console.log(arrMessgae));
     >
       <form @submit.prevent="sendQuestion">
         <InputGroup>
-          <InputText class="w-full border-1 p-2" v-model="message" />
+          <InputText id="input_mess" class="w-full border-1 p-2" v-model="message" />
           <Button
-            :loading="loading"
+            :loading="isLoading"
             icon="pi pi-telegram h-[25px] w-[25px] items-center justify-center pt-1"
             style="font-size: 1.5rem"
             @click="sendQuestion"
