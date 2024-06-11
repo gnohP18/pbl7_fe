@@ -17,6 +17,23 @@ export const crawlAPI = (taskKey: string) : Promise<any> => {
     });
 };
 
+export const crawlAllAPI = () : Promise<any> => {
+  return axios
+    .get(`${API_URL}/crawl/start-all-tasks`)
+    .then((result) => {
+      return result.data
+    });
+};
+
+export const getResultCrawlAPI = () : Promise<any> => {
+  return axios
+    .get(`${API_URL}/crawl/crawl-result`)
+    .then((result) => {
+      return result.data
+    });
+};
+
+
 export const startPreprocessAPI = () : Promise<any> => {
   return axios
     .get(`${API_URL}/preprocess/start`)
